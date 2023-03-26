@@ -73,7 +73,7 @@ class _ProfileState extends State<Profile> {
                 Column(
                   children: <Widget>[
                     Text(
-                      "Assawin Namkort",
+                      "Assawin Namkorttt",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
