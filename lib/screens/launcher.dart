@@ -3,7 +3,7 @@
 import 'package:e_sport/screens/competition.dart';
 import 'package:e_sport/screens/firstpage.dart';
 import 'package:e_sport/screens/news.dart';
-import 'package:e_sport/screens/profile.dart';
+import 'package:e_sport/screens/pageprofile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

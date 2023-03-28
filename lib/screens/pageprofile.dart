@@ -1,15 +1,16 @@
-// ignore_for_file: prefer_const_constructors
-
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 
-class Competition extends StatefulWidget {
-  const Competition({super.key});
+import 'forgetpass.dart';
+
+class Profile extends StatefulWidget {
+  const Profile({super.key});
 
   @override
-  State<Competition> createState() => _CompetitionState();
+  State<Profile> createState() => _ProfileState();
 }
 
-class _CompetitionState extends State<Competition> {
+class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,12 +21,11 @@ class _CompetitionState extends State<Competition> {
           padding: const EdgeInsets.only(left: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            // ignore: prefer_const_literals_to_create_immutables
             children: <Widget>[
               IconButton(
                   onPressed: null,
                   icon: Icon(
-                    Icons.sports_esports,
+                    Icons.person,
                     size: 35,
                     color: Color.fromARGB(255, 255, 255, 255),
                   )),
@@ -33,7 +33,7 @@ class _CompetitionState extends State<Competition> {
                 width: 5,
               ),
               Text(
-                "การแข่งขันทั้งหมด",
+                "โปรไฟล์",
                 style: TextStyle(
                   color: Color.fromARGB(255, 255, 255, 255),
                   fontSize: 24,
@@ -46,12 +46,11 @@ class _CompetitionState extends State<Competition> {
         actions: <Widget>[
           IconButton(onPressed: () {}, icon: Icon(Icons.notifications))
         ],
-        //centerTitle: const EdgeInsets.all(10),
         backgroundColor: Color.fromARGB(255, 1, 5, 36),
         elevation: 0,
       ),
       body: Center(
-        child: Text("Competition"),
+        child: Text("Profile"),
       ),
     );
   }

@@ -3,7 +3,7 @@ import 'package:e_sport/screens/firstpage.dart';
 import 'package:e_sport/screens/forgetpass.dart';
 import 'package:e_sport/screens/login.dart';
 import 'package:e_sport/screens/news.dart';
-import 'package:e_sport/screens/profile.dart';
+import 'package:e_sport/screens/pageprofile.dart';
 import 'package:e_sport/screens/register.dart';
 import 'package:e_sport/screens/welcome.dart';
 import 'package:flutter/widgets.dart';

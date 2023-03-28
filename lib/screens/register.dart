@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, no_leading_underscores_for_local_identifiers
 
 import 'package:flutter/material.dart';
+import 'package:e_sport/models/profile.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -10,6 +11,9 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final formKey = GlobalKey<FormState>();
+  Profile profile = Profile(email: '', firstname: '', password: '');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +42,6 @@ class _RegisterState extends State<Register> {
               _boxepass(),
               _boxeconfirmpass(),
               _boxage(),
-              _boxgender(),
               _buttonconfirm(),
             ],
           ),
@@ -130,6 +133,9 @@ class _RegisterState extends State<Register> {
       ),
       keyboardType: TextInputType.emailAddress,
       autocorrect: false,
+      onChanged: (String email) {
+        profile.email = email;
+      },
     );
 
     return Padding(
@@ -168,6 +174,9 @@ class _RegisterState extends State<Register> {
       ),
       keyboardType: TextInputType.text,
       autocorrect: false,
+      onChanged: (String password) {
+        profile.password = password;
+      },
     );
 
     return Padding(
@@ -238,63 +247,17 @@ class _RegisterState extends State<Register> {
       decoration: InputDecoration(
         hintText: "อายุ",
         contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
+        border: OutlineInputBorder(),
       ),
       keyboardType: TextInputType.text,
       autocorrect: false,
     );
 
-    final TextField _txtgender = TextField(
-      decoration: InputDecoration(
-        hintText: "อายุ",
-        contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
-      ),
-      keyboardType: TextInputType.text,
-      autocorrect: false,
-    );
-
-    return Padding(
-        padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              "อายุ",
-              style: TextStyle(
-                fontSize: 20,
-                fontFamily: 'Kanit',
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 2),
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 255, 255, 255),
-                border: Border.all(width: 1, color: Colors.black54),
-                borderRadius: const BorderRadius.all(const Radius.circular(5)),
-              ),
-              child: _txtAge,
-            ),
-          ],
-        ));
-  }
-
-  Widget _boxgender() {
     final TextField _txtGender = TextField(
       decoration: InputDecoration(
         hintText: "เพศ",
         contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
-      ),
-      keyboardType: TextInputType.text,
-      autocorrect: false,
-    );
-
-    final TextField _txtAge = TextField(
-      decoration: InputDecoration(
-        hintText: "อายุ",
-        contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
+        border: OutlineInputBorder(),
       ),
       keyboardType: TextInputType.text,
       autocorrect: false,
@@ -304,23 +267,44 @@ class _RegisterState extends State<Register> {
       padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(
-            "เพศ",
-            style: TextStyle(
-              fontSize: 20,
-              fontFamily: 'Kanit',
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            // ignore: prefer_const_literals_to_create_immutables
+            children: <Widget>[
+              Text(
+                "อายุ",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Kanit',
+                ),
+              ),
+              SizedBox(width: 165),
+              Text(
+                "เพศ",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Kanit',
+                ),
+              ),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
-              border: Border.all(width: 1, color: Colors.black54),
-              borderRadius: const BorderRadius.all(const Radius.circular(5)),
-            ),
-            child: _txtGender,
+          SizedBox(width: 160),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: 170,
+                height: 55,
+                child: _txtAge,
+              ),
+              SizedBox(width: 26),
+              Container(
+                width: 170,
+                height: 55,
+                child: _txtGender,
+              ),
+            ],
           ),
         ],
       ),
@@ -338,14 +322,17 @@ class _RegisterState extends State<Register> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)),
               primary: Color.fromARGB(255, 255, 17, 0)),
-          onPressed: () {},
+          onPressed: () {
+            formKey.currentState?.save();
+            print("email = ${profile.email}");
+          },
           icon: Icon(
             Icons.login,
             size: 0,
             color: Color.fromARGB(255, 255, 255, 255),
           ),
           label: Text(
-            "ยืนยัน",
+            "ลงทะเบียน",
             style: TextStyle(
               fontSize: 25,
               fontFamily: 'Kanit',
