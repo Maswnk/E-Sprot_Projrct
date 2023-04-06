@@ -354,7 +354,6 @@ class _RegisterState extends State<Register> {
                   "email": profile.email,
                   "password": profile.password,
                   "birthday": profile.birthday,
-                  "gender": profile.gender,
                 });
                 try {
                   await FirebaseAuth.instance

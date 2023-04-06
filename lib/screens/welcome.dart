@@ -44,6 +44,7 @@ class _WelcomeState extends State<Welcome> {
             _textWelcome(),
             _buttonlogin(),
             _buttonregis(),
+            _buttonorganizer(),
           ],
         ),
       );
@@ -69,7 +70,7 @@ class _WelcomeState extends State<Welcome> {
 
   Widget _textWelcome() {
     return Padding(
-      padding: const EdgeInsets.only(top: 230),
+      padding: const EdgeInsets.only(top: 145),
       child: Column(
         children: const <Widget>[
           Text(
@@ -99,7 +100,7 @@ class _WelcomeState extends State<Welcome> {
 
   Widget _buttonlogin() {
     return Padding(
-      padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+      padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
       child: SizedBox(
         width: 500,
         height: 60,
@@ -149,6 +150,38 @@ class _WelcomeState extends State<Welcome> {
           ),
           label: const Text(
             "ลงทะเบียน",
+            style: TextStyle(
+              fontSize: 25,
+              fontFamily: 'Kanit',
+              color: Color.fromARGB(255, 255, 255, 255),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buttonorganizer() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+      child: SizedBox(
+        width: 500,
+        height: 60,
+        child: ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 0, 0, 0)),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return const Login();
+            }));
+          },
+          icon: const Icon(
+            Icons.login,
+            size: 0,
+            color: Color.fromARGB(255, 255, 17, 0),
+          ),
+          label: const Text(
+            "สำหรับผู้จัดการแข่งขัน",
             style: TextStyle(
               fontSize: 25,
               fontFamily: 'Kanit',

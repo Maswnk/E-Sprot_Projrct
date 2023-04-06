@@ -1,7 +1,6 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'forgetpass.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -11,6 +10,8 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  final auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +22,7 @@ class _ProfileState extends State<Profile> {
           padding: const EdgeInsets.only(left: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
+            children: const <Widget>[
               IconButton(
                   onPressed: null,
                   icon: Icon(
@@ -43,14 +44,56 @@ class _ProfileState extends State<Profile> {
             ],
           ),
         ),
-        actions: <Widget>[
-          IconButton(onPressed: () {}, icon: Icon(Icons.notifications))
-        ],
-        backgroundColor: Color.fromARGB(255, 1, 5, 36),
-        elevation: 0,
+        backgroundColor: const Color.fromARGB(255, 1, 5, 36),
       ),
-      body: Center(
-        child: Text("Profile"),
+      body: SizedBox(
+        child: Form(
+          child: ListView(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buttonlogout(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buttonlogout() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+      child: SizedBox(
+        width: 500,
+        height: 60,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 255, 17, 0)),
+          onPressed: () {
+            auth.signOut().then((value) {
+              Fluttertoast.showToast(
+                  msg: "ออกจากระบบเรียบร้อย", gravity: ToastGravity.SNACKBAR);
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/welcome',
+                (route) => false,
+              );
+            });
+          },
+          child: const Text(
+            "ออกจากระบบ",
+            style: TextStyle(
+              fontSize: 25,
+              fontFamily: 'Kanit',
+              color: Color.fromARGB(255, 255, 255, 255),
+            ),
+          ),
+        ),
       ),
     );
   }

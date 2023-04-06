@@ -199,7 +199,7 @@ class _LoginState extends State<Login> {
                     .then((value) {
                   formKey.currentState!.reset();
                   Fluttertoast.showToast(
-                      msg: "เข้าสู่ระบบสำเร็จ", gravity: ToastGravity.SNACKBAR);
+                      msg: "เข้าสู่ระบบสำเร็จ", gravity: ToastGravity.CENTER);
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     '/luancher',
