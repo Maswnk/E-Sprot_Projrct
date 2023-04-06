@@ -1,10 +1,7 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:e_sport/screens/competition.dart';
 import 'package:e_sport/screens/firstpage.dart';
 import 'package:e_sport/screens/news.dart';
 import 'package:e_sport/screens/pageprofile.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Launcher extends StatefulWidget {
@@ -24,27 +21,27 @@ class _LauncherState extends State<Launcher> {
   ];
 
   final List<BottomNavigationBarItem> _menuBar = <BottomNavigationBarItem>[
-    BottomNavigationBarItem(
+    const BottomNavigationBarItem(
       icon: Icon(
         Icons.home,
         size: 35,
       ),
       label: "หน้าหลัก",
     ),
-    BottomNavigationBarItem(
+    const BottomNavigationBarItem(
       icon: Icon(
         Icons.newspaper_sharp,
         size: 35,
       ),
       label: 'ข่าวสาร',
     ),
-    BottomNavigationBarItem(
+    const BottomNavigationBarItem(
         icon: Icon(
           Icons.sports_esports,
           size: 35,
         ),
         label: 'การแข่งขัน'),
-    BottomNavigationBarItem(
+    const BottomNavigationBarItem(
         icon: Icon(
           Icons.person,
           size: 35,
@@ -63,7 +60,7 @@ class _LauncherState extends State<Launcher> {
       body: _pageWidget.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Color.fromARGB(255, 1, 5, 36),
+        backgroundColor: const Color.fromARGB(255, 1, 5, 36),
         items: _menuBar,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.red,

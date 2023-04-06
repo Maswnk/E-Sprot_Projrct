@@ -1,9 +1,10 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, no_leading_underscores_for_local_identifiers, deprecated_member_use
-
-import 'package:e_sport/screens/firstpage.dart';
-import 'package:e_sport/screens/forgetpass.dart';
-import 'package:e_sport/screens/launcher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:e_sport/models/profile.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'forgetpass.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -13,38 +14,74 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final formKey = GlobalKey<FormState>();
+  Profile profile = Profile();
+  final Future<FirebaseApp> firebase = Firebase.initializeApp();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            "เข้าสู่ระบบ",
-            style: TextStyle(
-                color: Colors.black, fontSize: 25, fontFamily: 'Mitr'),
-          ),
-          centerTitle: true,
-          backgroundColor: Color.fromARGB(255, 249, 249, 249),
-          elevation: 0,
-        ),
-        body: ListView(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                _welcome(),
-                _boxmail(),
-                _buttonlogin(),
-                _text(),
-                _buttonloginfacebook(),
-                _buttonlogingoogle(),
-              ],
+    return FutureBuilder(
+      future: firebase,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("Error"),
             ),
-          ],
-        ));
+            body: Center(
+              child: Text("${snapshot.error}"),
+            ),
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: const Text(
+                "เข้าสู่ระบบ",
+                style: TextStyle(
+                    color: Colors.black, fontSize: 25, fontFamily: 'Mitr'),
+              ),
+              centerTitle: true,
+              backgroundColor: const Color.fromARGB(255, 249, 249, 249),
+              elevation: 0,
+            ),
+            body: SizedBox(
+              child: Form(
+                key: formKey,
+                child: ListView(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _welcome(),
+                          _boxemail(),
+                          _boxepass(),
+                          _buttonconfirm(),
+                          _text(),
+                          _buttonloginfacebook(),
+                          _buttonlogingoogle(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+    //
   }
 
   Widget _welcome() {
@@ -52,7 +89,7 @@ class _LoginState extends State<Login> {
       padding: const EdgeInsets.only(top: 40, left: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+        children: const <Widget>[
           Text(
             "ยินดีต้อนรับ",
             style: TextStyle(
@@ -71,60 +108,64 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _boxmail() {
-    final TextField _txtMail = TextField(
-      decoration: InputDecoration(
-        hintText: "อีเมล",
-        contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
-      ),
-      keyboardType: TextInputType.emailAddress,
-      autocorrect: false,
-    );
-
-    final TextField _txtpass = TextField(
-      obscureText: true,
-      decoration: InputDecoration(
-        hintText: "รหัสผ่าน",
-        contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
-      ),
-      keyboardType: TextInputType.text,
-      autocorrect: false,
-    );
-
+  Widget _boxemail() {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, left: 20, right: 20),
+      padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
-              border: Border.all(width: 1, color: Colors.black54),
-              borderRadius: const BorderRadius.all(const Radius.circular(5)),
+          TextFormField(
+            decoration: const InputDecoration(
+              hintText: "อีเมล",
+              contentPadding: EdgeInsets.all(19),
+              border: OutlineInputBorder(),
             ),
-            child: _txtMail,
+            validator: MultiValidator([
+              RequiredValidator(errorText: "กรุณากรอกอีเมล"),
+              EmailValidator(errorText: "รูปแบบอีเมลไม่ถูกต้อง")
+            ]),
+            keyboardType: TextInputType.emailAddress,
+            autocorrect: false,
+            onSaved: (String? email) {
+              profile.email = email;
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _boxepass() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          TextFormField(
+            obscureText: true,
+            decoration: const InputDecoration(
+              hintText: "รหัสผ่าน",
+              contentPadding: EdgeInsets.all(19),
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.text,
+            autocorrect: false,
+            onSaved: (String? password) {
+              profile.password = password;
+            },
+            validator: RequiredValidator(errorText: "กรุณากรอกรหัสผ่าน"),
           ),
           Container(
-            margin: EdgeInsets.only(top: 19),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
-              border: Border.all(width: 1, color: Colors.black54),
-              borderRadius: const BorderRadius.all(const Radius.circular(5)),
-            ),
-            child: _txtpass,
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 0, left: 250),
+            margin: const EdgeInsets.only(top: 0, left: 250),
             child: TextButton(
               style: ButtonStyle(
                   overlayColor: MaterialStateProperty.all(Colors.transparent)),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ForgetPass();
+                  return const ForgetPass();
                 }));
               },
-              child: Text(
+              child: const Text(
                 "ลืมรหัสผ่าน ?",
                 style: TextStyle(color: Colors.black87, fontSize: 18),
               ),
@@ -135,26 +176,50 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _buttonlogin() {
+  Widget _buttonconfirm() {
     return Padding(
-      padding: const EdgeInsets.only(top: 120, left: 20, right: 20),
+      padding: const EdgeInsets.only(top: 100, left: 20, right: 20),
       child: SizedBox(
         width: 500,
         height: 60,
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(255, 255, 17, 0)),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return Launcher();
-            }));
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              backgroundColor: const Color.fromARGB(255, 255, 17, 0)),
+          onPressed: () async {
+            if (formKey.currentState!.validate()) {
+              formKey.currentState!.save();
+              try {
+                await FirebaseAuth.instance
+                    .signInWithEmailAndPassword(
+                  email: profile.email!,
+                  password: profile.password!,
+                )
+                    .then((value) {
+                  formKey.currentState!.reset();
+                  Fluttertoast.showToast(
+                      msg: "เข้าสู่ระบบสำเร็จ", gravity: ToastGravity.SNACKBAR);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/luancher',
+                    (route) => false,
+                  );
+                });
+              } on FirebaseAuthException catch (e) {
+                Fluttertoast.showToast(
+                  msg: 'อีเมล หรือ รหัสผ่านไม่ถูกต้อง',
+                  gravity: ToastGravity.SNACKBAR,
+                );
+              }
+            }
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.login,
             size: 0,
             color: Color.fromARGB(255, 255, 255, 255),
           ),
-          label: Text(
+          label: const Text(
             "เข้าสู่ระบบ",
             style: TextStyle(
               fontSize: 25,
@@ -168,8 +233,8 @@ class _LoginState extends State<Login> {
   }
 
   Widget _text() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20, left: 25, right: 25),
+    return const Padding(
+      padding: EdgeInsets.only(top: 20, left: 25, right: 25),
       child: Text(
         "- - - -  หรือเชื่อมต่อกับบัญชีอื่นของคุณ - - - - ",
         style:
@@ -186,14 +251,14 @@ class _LoginState extends State<Login> {
         height: 60,
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(255, 27, 83, 251)),
+              backgroundColor: const Color.fromARGB(255, 27, 83, 251)),
           onPressed: () {},
-          icon: Icon(
+          icon: const Icon(
             Icons.facebook,
             size: 25,
             color: Color.fromARGB(255, 255, 255, 255),
           ),
-          label: Text(
+          label: const Text(
             "เชื่อมต่อกับ Facebook",
             style: TextStyle(
               fontSize: 25,
@@ -214,14 +279,14 @@ class _LoginState extends State<Login> {
         height: 60,
         child: ElevatedButton.icon(
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(255, 255, 255, 255)),
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255)),
           onPressed: () {},
           icon: Image.asset(
             'assets/ggo.png',
             height: 22,
             width: 22,
           ),
-          label: Text(
+          label: const Text(
             "เชื่อมต่อกับ Google",
             style: TextStyle(
               fontSize: 25,

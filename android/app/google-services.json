@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "571961186371",
+    "project_id": "e-sportapp",
+    "storage_bucket": "e-sportapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:571961186371:android:c608aba649c1d0f3b69cf6",
+        "android_client_info": {
+          "package_name": "com.masw.e_sport"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "571961186371-s5fnsi44h5atkpgpo2lqv4782n7s6tkv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW1rlRTWPmIDLIZpDL5bK9RdC0DR2WQ5U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "571961186371-s5fnsi44h5atkpgpo2lqv4782n7s6tkv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

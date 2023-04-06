@@ -1,7 +1,11 @@
-// ignore_for_file: prefer_const_constructors, no_leading_underscores_for_local_identifiers
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:e_sport/models/profile.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:intl/intl.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -12,303 +16,374 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final formKey = GlobalKey<FormState>();
-  Profile profile = Profile(email: '', firstname: '', password: '');
+
+  Profile profile = Profile();
+
+  final Future<FirebaseApp> firebase = Firebase.initializeApp();
+
+  CollectionReference userCollection =
+      FirebaseFirestore.instance.collection("User Table");
+
+  final _passwordController = TextEditingController();
+  final _date = TextEditingController();
+
+  // void dispise() {
+  //   _passwordController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          "สมัครสมาชิก",
-          style:
-              TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Mitr'),
-        ),
-        centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 249, 249, 249),
-        elevation: 0,
-      ),
-      body: ListView(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _boxname(),
-              _boxsurname(),
-              _boxemail(),
-              _boxepass(),
-              _boxeconfirmpass(),
-              _boxage(),
-              _buttonconfirm(),
-            ],
+    return FutureBuilder(
+      future: firebase,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("Error"),
+            ),
+            body: Center(
+              child: Text("${snapshot.error}"),
+            ),
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: const Text(
+                "สมัครสมาชิก",
+                style: TextStyle(
+                    color: Colors.black, fontSize: 25, fontFamily: 'Mitr'),
+              ),
+              centerTitle: true,
+              backgroundColor: const Color.fromARGB(255, 249, 249, 249),
+              elevation: 0,
+            ),
+            body: SizedBox(
+              child: Form(
+                key: formKey,
+                child: ListView(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _boxname(),
+                          _boxsurname(),
+                          _boxemail(),
+                          _boxepass(),
+                          _boxeconfirmpass(),
+                          _boxbirthday(),
+                          _buttonconfirm(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
           ),
-        ],
-      ),
+        );
+      },
     );
+    //
   }
 
   Widget _boxname() {
-    final TextField _txtName = TextField(
-      decoration: InputDecoration(
-        hintText: "ชื่อ",
-        contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
-      ),
-      keyboardType: TextInputType.text,
-      autocorrect: false,
-    );
-
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            "ชื่อ",
-            style: TextStyle(
-              fontSize: 20,
-              fontFamily: 'Kanit',
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              "ชื่อ",
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Kanit',
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
-              border: Border.all(width: 1, color: Colors.black54),
-              borderRadius: const BorderRadius.all(const Radius.circular(5)),
+            const SizedBox(height: 2),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: "ชื่อ",
+                contentPadding: EdgeInsets.all(19),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.text,
+              autocorrect: false,
+              onSaved: (String? firstname) {
+                profile.firstname = firstname;
+              },
+              validator: RequiredValidator(errorText: "กรุณากรอกชื่อ"),
             ),
-            child: _txtName,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _boxsurname() {
-    final TextField _txtsurName = TextField(
-      decoration: InputDecoration(
-        hintText: "นามสกุล",
-        contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
-      ),
-      keyboardType: TextInputType.text,
-      autocorrect: false,
-    );
-
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            "นามสกุล",
-            style: TextStyle(
-              fontSize: 20,
-              fontFamily: 'Kanit',
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              "นามสกุล",
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Kanit',
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
-              border: Border.all(width: 1, color: Colors.black54),
-              borderRadius: const BorderRadius.all(const Radius.circular(5)),
+            const SizedBox(height: 2),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: "นามสกุล",
+                contentPadding: EdgeInsets.all(20),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.text,
+              autocorrect: false,
+              onSaved: (String? lastname) {
+                profile.lastname = lastname;
+              },
+              validator: RequiredValidator(errorText: "กรุณากรอกนามสกุล"),
             ),
-            child: _txtsurName,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _boxemail() {
-    final TextField _txtEmail = TextField(
-      decoration: InputDecoration(
-        hintText: "อีเมล",
-        contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
-      ),
-      keyboardType: TextInputType.emailAddress,
-      autocorrect: false,
-      onChanged: (String email) {
-        profile.email = email;
-      },
-    );
-
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            "อีเมล",
-            style: TextStyle(
-              fontSize: 20,
-              fontFamily: 'Kanit',
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              "อีเมล",
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Kanit',
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
-              border: Border.all(width: 1, color: Colors.black54),
-              borderRadius: const BorderRadius.all(const Radius.circular(5)),
+            const SizedBox(height: 2),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: "อีเมล",
+                contentPadding: EdgeInsets.all(20),
+                border: OutlineInputBorder(),
+              ),
+              validator: MultiValidator([
+                RequiredValidator(errorText: "กรุณากรอกอีเมล"),
+                EmailValidator(errorText: "รูปแบบอีเมลไม่ถูกต้อง")
+              ]),
+              keyboardType: TextInputType.emailAddress,
+              autocorrect: false,
+              onSaved: (String? email) {
+                profile.email = email;
+              },
             ),
-            child: _txtEmail,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _boxepass() {
-    final TextField _txtPass = TextField(
-      obscureText: true,
-      decoration: InputDecoration(
-        hintText: "รหัสผ่าน",
-        contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
-      ),
-      keyboardType: TextInputType.text,
-      autocorrect: false,
-      onChanged: (String password) {
-        profile.password = password;
-      },
-    );
-
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            "รหัสผ่าน",
-            style: TextStyle(
-              fontSize: 20,
-              fontFamily: 'Kanit',
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              "รหัสผ่าน",
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Kanit',
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
-              border: Border.all(width: 1, color: Colors.black54),
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                hintText: "รหัสผ่าน",
+                contentPadding: EdgeInsets.all(20),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.text,
+              autocorrect: false,
+              onSaved: (String? password) {
+                profile.password = password;
+              },
+              validator: RequiredValidator(errorText: "กรุณากรอกรหัสผ่าน"),
             ),
-            child: _txtPass,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _boxeconfirmpass() {
-    final TextField _txtconfirmPass = TextField(
-      decoration: InputDecoration(
-        hintText: "ยืนยันรหัสผ่าน",
-        contentPadding: EdgeInsets.all(19),
-        border: InputBorder.none,
-      ),
-      keyboardType: TextInputType.text,
-      autocorrect: false,
-    );
-
     return Padding(
       padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            "ยืนยันรหัสผ่าน",
-            style: TextStyle(
-              fontSize: 20,
-              fontFamily: 'Kanit',
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              "ยืนยันรหัสผ่าน",
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Kanit',
+              ),
             ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 255, 255),
-              border: Border.all(width: 1, color: Colors.black54),
-              borderRadius: const BorderRadius.all(const Radius.circular(5)),
+            TextFormField(
+              obscureText: true,
+              decoration: const InputDecoration(
+                hintText: "ยืนยันรหัสผ่าน",
+                contentPadding: EdgeInsets.all(19),
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.text,
+              autocorrect: false,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'กรุณายืนรหัสผ่าน';
+                } else if (value != _passwordController.text) {
+                  return 'รหัสผ่านไม่ตรงกัน';
+                }
+                return null;
+              },
             ),
-            child: _txtconfirmPass,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _boxage() {
-    final TextField _txtAge = TextField(
-      decoration: InputDecoration(
-        hintText: "อายุ",
-        contentPadding: EdgeInsets.all(19),
-        border: OutlineInputBorder(),
-      ),
-      keyboardType: TextInputType.text,
-      autocorrect: false,
-    );
-
-    final TextField _txtGender = TextField(
-      decoration: InputDecoration(
-        hintText: "เพศ",
-        contentPadding: EdgeInsets.all(19),
-        border: OutlineInputBorder(),
-      ),
-      keyboardType: TextInputType.text,
-      autocorrect: false,
-    );
-
+  Widget _boxbirthday() {
+    final genders = ['ชาย', 'หญิง', 'อื่นๆ'];
     return Padding(
-      padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
+        padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
+        child: SingleChildScrollView(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            // ignore: prefer_const_literals_to_create_immutables
             children: <Widget>[
-              Text(
-                "อายุ",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'Kanit',
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const <Widget>[
+                  Text(
+                    "วันเกิด",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'Kanit',
+                    ),
+                  ),
+                  SizedBox(width: 145),
+                  Text(
+                    "เพศ",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'Kanit',
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: 165),
-              Text(
-                "เพศ",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'Kanit',
-                ),
+              const SizedBox(width: 160),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    width: 170,
+                    height: 55,
+                    child: TextFormField(
+                      controller: _date,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.calendar_today_rounded),
+                        hintText: "วันเกิด",
+                        contentPadding: EdgeInsets.all(19),
+                        border: OutlineInputBorder(),
+                      ),
+                      onTap: () async {
+                        DateTime? pickeddate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime(2100));
+
+                        if (pickeddate != null) {
+                          final DateFormat formatter = DateFormat('dd/MM/yyyy');
+                          final String formatted = formatter.format(pickeddate);
+                          setState(
+                            () {
+                              _date.text = formatted;
+                            },
+                          );
+                        }
+                      },
+                      onSaved: (String? date) {
+                        profile.birthday = date;
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'กรุณายืนเลือกวันเกิด';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 26),
+                  SizedBox(
+                    width: 170,
+                    height: 55,
+                    child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          hintText: "เพศ",
+                          contentPadding: EdgeInsets.all(19),
+                          border: OutlineInputBorder(),
+                        ),
+                        value: profile.gender,
+                        items: genders
+                            .map((gender) => DropdownMenuItem(
+                                  value: gender,
+                                  child: Text(gender),
+                                ))
+                            .toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            profile.gender = value!;
+                          });
+                        },
+                        onSaved: (String? gender) {
+                          profile.gender = gender;
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'กรุณาเลือกเพศ';
+                          }
+                          return null;
+                        }),
+                  ),
+                ],
               ),
             ],
           ),
-          SizedBox(width: 160),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                width: 170,
-                height: 55,
-                child: _txtAge,
-              ),
-              SizedBox(width: 26),
-              Container(
-                width: 170,
-                height: 55,
-                child: _txtGender,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget _buttonconfirm() {
@@ -321,17 +396,57 @@ class _RegisterState extends State<Register> {
           style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)),
-              primary: Color.fromARGB(255, 255, 17, 0)),
-          onPressed: () {
-            formKey.currentState?.save();
-            print("email = ${profile.email}");
+              backgroundColor: const Color.fromARGB(255, 255, 17, 0)),
+          onPressed: () async {
+            if (formKey.currentState!.validate()) {
+              formKey.currentState!.save();
+              userCollection.add({
+                "firstname": profile.firstname,
+                "lastname": profile.lastname,
+                "email": profile.email,
+                "password": profile.password,
+                "birthday": profile.birthday,
+                "gender": profile.gender,
+              });
+              try {
+                await FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                  email: profile.email!,
+                  password: profile.password!,
+                )
+                    .then((value) {
+                  formKey.currentState!.reset();
+                  Fluttertoast.showToast(
+                      msg: "สมัครสมาชิกสำเร็จ", gravity: ToastGravity.SNACKBAR);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/welcome',
+                    (route) => false,
+                  );
+                });
+              } on FirebaseAuthException catch (e) {
+                String? messageemailerror;
+                if (e.code == 'email-already-in-use') {
+                  messageemailerror =
+                      "มีอีเมลนี้ในระบบแล้ว โปรดใช้อีเมลอื่นแทน";
+                } else if (e.code == 'weak-password') {
+                  messageemailerror = "รหัสผ่านต้องมีความยาว 6 ตัวอักษรขึ้นไป";
+                } else {
+                  messageemailerror = e.message;
+                }
+                Fluttertoast.showToast(
+                  msg: '$messageemailerror',
+                  gravity: ToastGravity.SNACKBAR,
+                );
+              }
+            }
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.login,
             size: 0,
             color: Color.fromARGB(255, 255, 255, 255),
           ),
-          label: Text(
+          label: const Text(
             "ลงทะเบียน",
             style: TextStyle(
               fontSize: 25,

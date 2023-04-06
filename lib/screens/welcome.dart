@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:e_sport/screens/login.dart';
 import 'package:e_sport/screens/register.dart';
 import 'package:flutter/material.dart';
@@ -19,17 +17,19 @@ class _WelcomeState extends State<Welcome> {
         body: Stack(
           children: <Widget>[
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage("assets/bg.png"),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            Column(
-              children: <Widget>[
-                _buildForm(),
-              ],
+            SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  _buildForm(),
+                ],
+              ),
             ),
           ],
         ),
@@ -37,18 +37,14 @@ class _WelcomeState extends State<Welcome> {
     );
   }
 
-  Widget _buildForm() => Container(
-        //margin: EdgeInsets.only(top: 80, left: 80, right: 20),
-        // padding: const EdgeInsets.fromLTRB(10, 70, 10, 10),
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              _logo(),
-              _textWelcome(),
-              _buttonlogin(),
-              _buttonregis(),
-            ],
-          ),
+  Widget _buildForm() => Center(
+        child: Column(
+          children: <Widget>[
+            _logo(),
+            _textWelcome(),
+            _buttonlogin(),
+            _buttonregis(),
+          ],
         ),
       );
 
@@ -60,7 +56,7 @@ class _WelcomeState extends State<Welcome> {
             "assets/icon/logo.png",
             scale: 1.8,
           ),
-          Text(
+          const Text(
             "E-Sport",
             style: TextStyle(
                 fontSize: 40,
@@ -75,7 +71,7 @@ class _WelcomeState extends State<Welcome> {
     return Padding(
       padding: const EdgeInsets.only(top: 230),
       child: Column(
-        children: <Widget>[
+        children: const <Widget>[
           Text(
             "ยินดีต้อนรับ",
             style: TextStyle(
@@ -108,18 +104,18 @@ class _WelcomeState extends State<Welcome> {
         width: 500,
         height: 60,
         child: ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(primary: Colors.white),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return Login();
+              return const Login();
             }));
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.login,
             size: 0,
             color: Color.fromARGB(255, 255, 17, 0),
           ),
-          label: Text(
+          label: const Text(
             "เข้าสู่ระบบ",
             style: TextStyle(
               fontSize: 25,
@@ -139,19 +135,19 @@ class _WelcomeState extends State<Welcome> {
         width: 500,
         height: 60,
         child: ElevatedButton.icon(
-          style:
-              ElevatedButton.styleFrom(primary: Color.fromARGB(255, 255, 0, 0)),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 255, 0, 0)),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return Register();
+              return const Register();
             }));
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.login,
             size: 0,
             color: Color.fromARGB(255, 255, 17, 0),
           ),
-          label: Text(
+          label: const Text(
             "ลงทะเบียน",
             style: TextStyle(
               fontSize: 25,

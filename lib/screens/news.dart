@@ -1,7 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'package:flutter/material.dart';
-import 'firstpage.dart';
 
 class News extends StatefulWidget {
   const News({super.key});
@@ -21,7 +18,7 @@ class _NewsState extends State<News> {
           padding: const EdgeInsets.only(left: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
+            children: const <Widget>[
               IconButton(
                   onPressed: null,
                   icon: Icon(
@@ -44,13 +41,13 @@ class _NewsState extends State<News> {
           ),
         ),
         actions: <Widget>[
-          IconButton(onPressed: () {}, icon: Icon(Icons.notifications))
+          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
         ],
         //centerTitle: const EdgeInsets.all(10),
-        backgroundColor: Color.fromARGB(255, 1, 5, 36),
+        backgroundColor: const Color.fromARGB(255, 1, 5, 36),
         elevation: 0,
       ),
-      body: Center(
+      body: const Center(
         child: Text("News"),
       ),
     );

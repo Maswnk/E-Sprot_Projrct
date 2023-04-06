@@ -1,8 +1,4 @@
-import 'package:e_sport/screens/news.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/material/input_border.dart';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
@@ -28,10 +24,10 @@ class _FirstPageState extends State<FirstPage> {
                 scale: 7.2,
                 alignment: Alignment.centerRight,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
-              Text(
+              const Text(
                 "E-SPORT",
                 style: TextStyle(
                     color: Color.fromARGB(255, 255, 4, 4),
@@ -43,10 +39,10 @@ class _FirstPageState extends State<FirstPage> {
           ),
         ),
         actions: <Widget>[
-          IconButton(onPressed: () {}, icon: Icon(Icons.notifications))
+          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
         ],
         //centerTitle: const EdgeInsets.all(10),
-        backgroundColor: Color.fromARGB(255, 1, 5, 36),
+        backgroundColor: const Color.fromARGB(255, 1, 5, 36),
         elevation: 0,
       ),
       body: Column(
@@ -54,7 +50,7 @@ class _FirstPageState extends State<FirstPage> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 suffixIcon: Icon(Icons.search),
                 hintText: "ค้นหา",
                 border: OutlineInputBorder(
