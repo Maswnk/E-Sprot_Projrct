@@ -26,6 +26,7 @@ class _RegisterState extends State<Register> {
 
   final _passwordController = TextEditingController();
   final _date = TextEditingController();
+  bool isChecked = false;
 
   // void dispise() {
   //   _passwordController.dispose();
@@ -78,6 +79,7 @@ class _RegisterState extends State<Register> {
                           _boxepass(),
                           _boxeconfirmpass(),
                           _boxbirthday(),
+                          _buttonaccept(),
                           _buttonconfirm(),
                         ],
                       ),
@@ -277,109 +279,54 @@ class _RegisterState extends State<Register> {
   }
 
   Widget _boxbirthday() {
-    final genders = ['ชาย', 'หญิง', 'อื่นๆ'];
     return Padding(
         padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const <Widget>[
-                  Text(
-                    "วันเกิด",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'Kanit',
-                    ),
-                  ),
-                  SizedBox(width: 145),
-                  Text(
-                    "เพศ",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'Kanit',
-                    ),
-                  ),
-                ],
+              const Text(
+                "วันเกิด",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Kanit',
+                ),
               ),
               const SizedBox(width: 160),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    width: 170,
-                    height: 55,
-                    child: TextFormField(
-                      controller: _date,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.calendar_today_rounded),
-                        hintText: "วันเกิด",
-                        contentPadding: EdgeInsets.all(19),
-                        border: OutlineInputBorder(),
-                      ),
-                      onTap: () async {
-                        DateTime? pickeddate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime(2100));
+              TextFormField(
+                controller: _date,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.calendar_today_rounded),
+                  hintText: "วันเกิด",
+                  contentPadding: EdgeInsets.all(19),
+                  border: OutlineInputBorder(),
+                ),
+                onTap: () async {
+                  DateTime? pickeddate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime(2100));
 
-                        if (pickeddate != null) {
-                          final DateFormat formatter = DateFormat('dd/MM/yyyy');
-                          final String formatted = formatter.format(pickeddate);
-                          setState(
-                            () {
-                              _date.text = formatted;
-                            },
-                          );
-                        }
+                  if (pickeddate != null) {
+                    final DateFormat formatter = DateFormat('dd/MM/yyyy');
+                    final String formatted = formatter.format(pickeddate);
+                    setState(
+                      () {
+                        _date.text = formatted;
                       },
-                      onSaved: (String? date) {
-                        profile.birthday = date;
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'กรุณายืนเลือกวันเกิด';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 26),
-                  SizedBox(
-                    width: 170,
-                    height: 55,
-                    child: DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(
-                          hintText: "เพศ",
-                          contentPadding: EdgeInsets.all(19),
-                          border: OutlineInputBorder(),
-                        ),
-                        value: profile.gender,
-                        items: genders
-                            .map((gender) => DropdownMenuItem(
-                                  value: gender,
-                                  child: Text(gender),
-                                ))
-                            .toList(),
-                        onChanged: (String? value) {
-                          setState(() {
-                            profile.gender = value!;
-                          });
-                        },
-                        onSaved: (String? gender) {
-                          profile.gender = gender;
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'กรุณาเลือกเพศ';
-                          }
-                          return null;
-                        }),
-                  ),
-                ],
+                    );
+                  }
+                },
+                onSaved: (String? date) {
+                  profile.birthday = date;
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'กรุณายืนเลือกวันเกิด';
+                  }
+                  return null;
+                },
               ),
             ],
           ),
@@ -398,47 +345,56 @@ class _RegisterState extends State<Register> {
                   borderRadius: BorderRadius.circular(5)),
               backgroundColor: const Color.fromARGB(255, 255, 17, 0)),
           onPressed: () async {
-            if (formKey.currentState!.validate()) {
-              formKey.currentState!.save();
-              userCollection.add({
-                "firstname": profile.firstname,
-                "lastname": profile.lastname,
-                "email": profile.email,
-                "password": profile.password,
-                "birthday": profile.birthday,
-                "gender": profile.gender,
-              });
-              try {
-                await FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                  email: profile.email!,
-                  password: profile.password!,
-                )
-                    .then((value) {
-                  formKey.currentState!.reset();
-                  Fluttertoast.showToast(
-                      msg: "สมัครสมาชิกสำเร็จ", gravity: ToastGravity.SNACKBAR);
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/welcome',
-                    (route) => false,
-                  );
+            if (isChecked) {
+              if (formKey.currentState!.validate()) {
+                formKey.currentState!.save();
+                userCollection.add({
+                  "firstname": profile.firstname,
+                  "lastname": profile.lastname,
+                  "email": profile.email,
+                  "password": profile.password,
+                  "birthday": profile.birthday,
+                  "gender": profile.gender,
                 });
-              } on FirebaseAuthException catch (e) {
-                String? messageemailerror;
-                if (e.code == 'email-already-in-use') {
-                  messageemailerror =
-                      "มีอีเมลนี้ในระบบแล้ว โปรดใช้อีเมลอื่นแทน";
-                } else if (e.code == 'weak-password') {
-                  messageemailerror = "รหัสผ่านต้องมีความยาว 6 ตัวอักษรขึ้นไป";
-                } else {
-                  messageemailerror = e.message;
+                try {
+                  await FirebaseAuth.instance
+                      .createUserWithEmailAndPassword(
+                    email: profile.email!,
+                    password: profile.password!,
+                  )
+                      .then((value) {
+                    formKey.currentState!.reset();
+                    Fluttertoast.showToast(
+                        msg: "สมัครสมาชิกสำเร็จ",
+                        gravity: ToastGravity.SNACKBAR);
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/welcome',
+                      (route) => false,
+                    );
+                  });
+                } on FirebaseAuthException catch (e) {
+                  String? messageemailerror;
+                  if (e.code == 'email-already-in-use') {
+                    messageemailerror =
+                        "มีอีเมลนี้ในระบบแล้ว โปรดใช้อีเมลอื่นแทน";
+                  } else if (e.code == 'weak-password') {
+                    messageemailerror =
+                        "รหัสผ่านต้องมีความยาว 6 ตัวอักษรขึ้นไป";
+                  } else {
+                    messageemailerror = e.message;
+                  }
+                  Fluttertoast.showToast(
+                    msg: '$messageemailerror',
+                    gravity: ToastGravity.SNACKBAR,
+                  );
                 }
-                Fluttertoast.showToast(
-                  msg: '$messageemailerror',
-                  gravity: ToastGravity.SNACKBAR,
-                );
               }
+            } else {
+              Fluttertoast.showToast(
+                msg: 'กรุณากดยอมรับเงื่อนไข',
+                gravity: ToastGravity.SNACKBAR,
+              );
             }
           },
           icon: const Icon(
@@ -454,6 +410,94 @@ class _RegisterState extends State<Register> {
               color: Color.fromARGB(255, 255, 255, 255),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buttonaccept() {
+    //TextEditingController controller = TextEditingController();
+    return Padding(
+      padding: const EdgeInsets.only(top: 25, left: 8, right: 20),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 21,
+              child: Row(
+                children: [
+                  Checkbox(
+                    value: isChecked,
+                    onChanged: (bool? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          isChecked = newValue;
+                        });
+                      }
+                    },
+                  ),
+                  const Text(
+                    'ยอมรับเงื่อนไขการใช้บริการ',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Kanit',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    // โค้ดสำหรับแสดงหน้าข้อกำหนดการให้บริการ
+                  },
+                  child: const Text(
+                    'ข้อกำหนดในการให้บริการ',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Kanit',
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                const Text(
+                  'และ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Kanit',
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // โค้ดสำหรับแสดงหน้าข้อกำหนดการให้บริการ
+                  },
+                  child: const Text(
+                    'นโยบายความเป็นส่วนตัว*',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Kanit',
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (!isChecked)
+              const Padding(
+                padding: EdgeInsets.only(top: 1, left: 8),
+                child: Text(
+                  'กรุณากดยอมรับ',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
